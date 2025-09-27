@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Emergency_form.css">
+    <title>Contact Information Form</title>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="form-title">Contact Information Form</h2>
+        
+        <div id="contactForm">
+            <div class="form-group">
+                <label for="name" class="form-label">Name <span class="required">*</span></label>
+                <input type="text" id="name" class="form-input" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="contact" class="form-label">Contact <span class="required">*</span></label>
+                <input type="tel" id="contact" class="form-input" placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-group">
+                <label for="state" class="form-label">State <span class="required">*</span></label>
+                <input type="text" id="state" class="form-input" placeholder="Enter your state">
+            </div>
+
+            <div class="form-group">
+                <label for="pin" class="form-label">PIN <span class="required">*</span></label>
+                <input type="text" id="pin" class="form-input" placeholder="Enter your PIN code" maxlength="6">
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                Please fill in all fields.
+            </div>
+
+            <div class="success-message" id="successMessage">
+                Form submitted successfully!
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="handleSubmit()">Submit</button>
+                <button type="button" class="btn btn-secondary" onclick="handleClear()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleSubmit() {
+            const name = document.getElementById('name').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+            const state = document.getElementById('state').value.trim();
+            const pin = document.getElementById('pin').value.trim();
+            
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide previous messages
+            errorMessage.style.display = 'none';
+            
+            // Validate all fields are filled
+            if (!name || !contact || !state || !pin) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Store form data in localStorage for the next page
+            localStorage.setItem('contactFormData', JSON.stringify({ name, contact, state, pin }));
+            
+            // Redirect to call routing page
+            showCallRoutingPage();
+        }
+
+        function showCallRoutingPage() {
+            // Hide the form
+            document.getElementById('contactForm').style.display = 'none';
+            document.querySelector('.form-title').style.display = 'none';
+            
+            // Get stored data
+            const formData = JSON.parse(localStorage.getItem('contactFormData'));
+            
+            // Create and show the call routing page
+            const container = document.querySelector('.form-container');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin-bottom: 30px;">
+                        <div style="width: 80px; height: 80px; border: 4px solid #3182ce; border-top: 4px solid transparent; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                        <h2 style="color: #2d3748; margin-bottom: 15px; font-size: 24px;">Thank you, ${formData.name}!</h2>
+                        <p style="color: #4a5568; font-size: 18px; line-height: 1.6;">We are directing your call to available experts</p>
+                    </div>
+                    
+                    <div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin-bottom: 25px; text-align: left;">
+                        <h3 style="color: #2d3748; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Your Details:</h3>
+                        <div style="color: #4a5568; font-size: 14px; line-height: 1.8;">
+                            <strong>Name:</strong> ${formData.name}<br>
+                            <strong>Contact:</strong> ${formData.contact}<br>
+                            <strong>State:</strong> ${formData.state}<br>
+                            <strong>PIN:</strong> ${formData.pin}
+                        </div>
+                    </div>
+                    
+                    <div style="background-color: #edf2f7; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <p style="color: #4a5568; font-size: 14px; margin-bottom: 8px;">
+                            <strong>What happens next?</strong>
+                        </p>
+                        <ul style="color: #4a5568; font-size: 14px; text-align: left; margin-left: 20px;">
+                            <li>Our system is connecting you to an available expert</li>
+                            <li>You will receive a call within 2-3 minutes</li>
+                            <li>Please keep your phone ready</li>
+                        </ul>
+                    </div>
+                    
+                    <button onclick="goBack()" style="background-color: #718096; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                        Back to Form
+                    </button>
+                </div>
+                
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+        }
+
+        function goBack() {
+            location.reload();
+        }
+        
+        function handleClear() {
+            document.getElementById('name').value = '';
+            document.getElementById('contact').value = '';
+            document.getElementById('state').value = '';
+            document.getElementById('pin').value = '';
+            
+            // Hide messages
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        // Add input event listeners to hide error message when user starts typing
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    document.getElementById('errorMessage').style.display = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
